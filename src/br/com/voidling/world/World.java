@@ -1,8 +1,6 @@
 package br.com.voidling.world;
 
-import br.com.voidling.entities.Buff;
-import br.com.voidling.entities.Enemy;
-import br.com.voidling.entities.Entity;
+import br.com.voidling.entities.*;
 import br.com.voidling.main.Game;
 
 import javax.imageio.ImageIO;
@@ -45,7 +43,7 @@ public class World {
                         }
                         case CYAN: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Buff(xpos, ypos, Entity.TYPE.AMMO));
+                            Game.entities.add(new Ammo(xpos, ypos));
                             break;
                         }
                         case RED: {
@@ -55,17 +53,17 @@ public class World {
                         }
                         case GREEN: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Buff(xpos, ypos, Entity.TYPE.WEAPON));
+                            Game.entities.add(new Weapon(xpos, ypos));
                             break;
                         }
                         case PINK: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Buff(xpos, ypos, Entity.TYPE.LIFE));
+                            Game.entities.add(new Lifepack(xpos, ypos));
                             break;
                         }
                         case YELLOW: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Buff(xpos, ypos, Entity.TYPE.COIN));
+                            Game.entities.add(new Coin(xpos, ypos));
                             break;
                         }
                         default: {

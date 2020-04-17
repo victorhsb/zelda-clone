@@ -20,7 +20,6 @@ public class Game extends Canvas implements Runnable, KeyListener {
     
     private Thread thread;
     private boolean isRunning = true;
-    private String gameName = "Zolda";
     public static final int spriteSize = 16;
 
     // background image
@@ -43,8 +42,6 @@ public class Game extends Canvas implements Runnable, KeyListener {
         this.initFrame();
         entities = new ArrayList<>();
 
-
-        // testing purposes only. player shall be initialized by the map frame.
         player = new Player(0,0,16,16, spritesheet.getSprite(32,0,16,16));
         entities.add(player);
         world = new World("/map.png");
@@ -52,6 +49,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
     // basic setup of the window to be used on the game;
     public void initFrame() {
+        String gameName = "Zolda";
         frame = new JFrame(gameName);
         frame.add(this);
         frame.setResizable(false);
