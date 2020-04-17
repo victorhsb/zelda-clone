@@ -2,43 +2,52 @@ package br.com.voidling.main;
 
 import br.com.voidling.entities.Entity;
 import br.com.voidling.entities.Player;
+import br.com.voidling.graphics.IndexedSpritesheet;
 import br.com.voidling.graphics.Spritesheet;
+import br.com.voidling.world.World;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-public class Game extends Canvas implements Runnable {
+public class Game extends Canvas implements Runnable, KeyListener {
     private static final long serialVersionUID = 1L;
     
     private Thread thread;
     private boolean isRunning = true;
     private String gameName = "Zolda";
+    public static final int spriteSize = 16;
 
     // background image
     private BufferedImage image;
     // display
     public static JFrame frame;
-    public final int WIDTH = 240;
-    public final int HEIGHT = 160;
-    public final int SCALE = 3;
+    public int WIDTH = 240, HEIGHT = 160, SCALE = 3;
 
-    public ArrayList<Entity> entities;
-    public Spritesheet spritesheet;
+    public static ArrayList<Entity> entities;
+    public static IndexedSpritesheet spritesheet;
+    public static World world;
+
+    public static Player player;
 
     public Game() {
+        addKeyListener(this);
+        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        spritesheet = new IndexedSpritesheet("/spritesheet.png");
         this.setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
         this.initFrame();
-        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         entities = new ArrayList<>();
-        spritesheet = new Spritesheet("/spritesheet.png");
+
 
         // testing purposes only. player shall be initialized by the map frame.
-        Player player = new Player(0,0,16,16, spritesheet.getSprite(32,0,16,16));
+        player = new Player(0,0,16,16, spritesheet.getSprite(32,0,16,16));
         entities.add(player);
+        world = new World("/map.png");
     }
 
     // basic setup of the window to be used on the game;
@@ -74,9 +83,6 @@ public class Game extends Canvas implements Runnable {
 
     public void tick() {
         for (Entity e : entities) {
-            if (e instanceof Player) {
-                System.out.println("player ticking");
-            }
             e.tick();
         }
     }
@@ -91,8 +97,9 @@ public class Game extends Canvas implements Runnable {
         // get the graphics component to be drawn on
         Graphics g = image.getGraphics();
         // clear its background
-        g.setColor(new Color(100,100,100));
+        g.setColor(new Color(0,0,0));
         g.fillRect(0, 0, WIDTH, HEIGHT);
+        world.render(g);
 
         for (Entity e : entities) {
             e.render(g);
@@ -134,5 +141,76 @@ public class Game extends Canvas implements Runnable {
         }
 
         this.stop();
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D: {
+                player.right = true;
+                break;
+            }
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A: {
+                player.left = true;
+                player.inverted = true;
+                break;
+            }
+            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S: {
+                player.down = true;
+                break;
+            }
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_W: {
+                player.up = true;
+                break;
+            }
+            case KeyEvent.VK_SHIFT: {
+                player.running = true;
+                break;
+            }
+            default:
+                System.out.println("some key pressed " + e.getKeyChar());
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D: {
+                player.right = false;
+                break;
+            }
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A: {
+                player.left = false;
+                player.inverted = false;
+                break;
+            }
+            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S: {
+                player.down = false;
+                break;
+            }
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_W: {
+                player.up = false;
+                break;
+            }
+            case KeyEvent.VK_SHIFT: {
+                player.running = true;
+                break;
+            }
+            default:
+                System.out.println("some key pressed " + e.getKeyChar());
+        }
     }
 }
