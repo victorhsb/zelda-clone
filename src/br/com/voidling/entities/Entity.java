@@ -28,25 +28,6 @@ public class Entity {
     protected BufferedImage sprite;
     public boolean inverted;
 
-    public static Entity NewEntity(int x, int y, TYPE t) {
-        switch (t) {
-            case AMMO:
-                return new Buff(x, y, TYPE.AMMO);
-            case WEAPON:
-                return new Buff(x, y, TYPE.WEAPON);
-            case LIFE:
-                return new Buff(x, y, TYPE.LIFE);
-            case COIN:
-                return new Buff(x, y, TYPE.COIN);
-            case PLAYER:
-                return new Player(x, y);
-            case ENEMY:
-                return new Enemy(x, y);
-            default:
-                return new Buff(x, y, TYPE.AMMO);
-        }
-    }
-
     public Entity(int x, int y, int width, int height, BufferedImage sprite) {
         this.setX(x);
         this.setY(y);
