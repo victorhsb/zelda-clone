@@ -8,7 +8,7 @@ public class Camera {
     private static int y;
 
     public static int getX() {
-        return Util.Clamp((Game.world.width << 4) - Game.WIDTH, 0, x);
+        return Util.Clamp((World.width << 4) - Game.WIDTH, 0, x);
     }
 
     public static void setX(int x) {
@@ -16,7 +16,7 @@ public class Camera {
     }
 
     public static int getY() {
-        return Util.Clamp((Game.world.height << 4) - Game.HEIGHT, 0, y);
+        return Util.Clamp((World.height << 4) - Game.HEIGHT, 0, y);
     }
 
     public static void setY(int y) {
