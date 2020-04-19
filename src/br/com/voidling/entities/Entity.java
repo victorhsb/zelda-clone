@@ -1,6 +1,7 @@
 package br.com.voidling.entities;
 
 import br.com.voidling.main.Game;
+import br.com.voidling.world.Camera;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -71,7 +72,7 @@ public class Entity {
     }
 
     public void render(Graphics g) {
-        g.drawImage(sprite, getX(), getY(), null);
+        g.drawImage(sprite, getX() - Camera.getX(), getY() - Camera.getY(), null);
     }
 
     // tick to be implemented

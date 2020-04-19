@@ -12,6 +12,8 @@ public class Tile {
     private BufferedImage sprite;
     private int x, y;
 
+    protected Tile(int x, int y) {}
+
     public Tile(int x, int y, BufferedImage sprite) {
         this.x = x;
         this.y = y;
@@ -19,6 +21,6 @@ public class Tile {
     }
 
     public void render(Graphics g) {
-        g.drawImage(sprite, x, y, null);
+        g.drawImage(sprite, x - Camera.getX(), y - Camera.getY(), null);
     }
 }

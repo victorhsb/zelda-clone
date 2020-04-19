@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 public class Coin extends Entity  {
     public Coin(int x, int y) {
-        this(x, y, Game.spriteSize, Game.spriteSize, Entity.WEAPON_SPRITE);
+        this(x, y, Game.spriteSize, Game.spriteSize, Entity.COIN_SPRITE);
     }
 
     public Coin(int x, int y, int width, int height, BufferedImage sprite) {

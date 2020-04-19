@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 public class Ammo extends Entity  {
     public Ammo(int x, int y) {
-        this(x, y, Game.spriteSize, Game.spriteSize, Entity.WEAPON_SPRITE);
+        this(x, y, Game.spriteSize, Game.spriteSize, Entity.AMMO_SPRITE);
     }
 
     public Ammo(int x, int y, int width, int height, BufferedImage sprite) {

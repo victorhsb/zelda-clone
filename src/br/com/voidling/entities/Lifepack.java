@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 public class Lifepack extends Entity {
     public Lifepack(int x, int y) {
-        this(x, y, Game.spriteSize, Game.spriteSize, Entity.WEAPON_SPRITE);
+        this(x, y, Game.spriteSize, Game.spriteSize, Entity.LIFEPACK_SPRITE);
     }
 
     public Lifepack(int x, int y, int width, int height, BufferedImage sprite) {

@@ -4,6 +4,7 @@ import br.com.voidling.entities.Entity;
 import br.com.voidling.entities.Player;
 import br.com.voidling.graphics.IndexedSpritesheet;
 import br.com.voidling.graphics.Spritesheet;
+import br.com.voidling.world.Camera;
 import br.com.voidling.world.World;
 
 import java.awt.*;
@@ -26,7 +27,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
     private BufferedImage image;
     // display
     public static JFrame frame;
-    public int WIDTH = 240, HEIGHT = 160, SCALE = 3;
+    public static int WIDTH = 240, HEIGHT = 160, SCALE = 3;
 
     public static ArrayList<Entity> entities;
     public static IndexedSpritesheet spritesheet;
@@ -57,7 +58,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-    }
+        }
 
     public static void main(String[] args) {
         Game game = new Game();
@@ -119,6 +120,8 @@ public class Game extends Canvas implements Runnable, KeyListener {
         int frames = 0;
         double timer = System.currentTimeMillis();
 
+        requestFocus();
+
         while(isRunning) {
             long now = System.nanoTime();
             delta += (now - lastTime) / ns; // delta is equal the difference between now and the last time the program ran, in nanoseconds
@@ -147,6 +150,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
             case KeyEvent.VK_RIGHT:
             case KeyEvent.VK_D: {
                 player.right = true;
+                player.inverted = false;
                 break;
             }
             case KeyEvent.VK_LEFT:
@@ -190,7 +194,6 @@ public class Game extends Canvas implements Runnable, KeyListener {
             case KeyEvent.VK_LEFT:
             case KeyEvent.VK_A: {
                 player.left = false;
-                player.inverted = false;
                 break;
             }
             case KeyEvent.VK_DOWN:
@@ -204,7 +207,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
                 break;
             }
             case KeyEvent.VK_SHIFT: {
-                player.running = true;
+                player.running = false;
                 break;
             }
             default:

@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class World {
-    private Tile[] tileset;
+    public static Tile[] tileset;
     public static int width, height, size;
 
     public World(String path) {
@@ -77,9 +77,37 @@ public class World {
         }
     }
 
+    public static boolean isFree(int xnext, int ynext) {
+        int left = xnext / Game.spriteSize;
+        int up = ynext / Game.spriteSize;
+        int right = (xnext + Game.spriteSize - 1) / Game.spriteSize;
+        int down = (ynext + Game.spriteSize - 1) / Game.spriteSize;
+
+        // check if position is inside a wall from the four different perspectives
+        // from (0,0), from (0, 1), from (1, 0) and from (1, 1)
+        return !(getTile(left ,up) instanceof WallTile ||
+                    getTile(left, down) instanceof WallTile ||
+                    getTile(right, up) instanceof WallTile ||
+                    getTile(right, down) instanceof WallTile);
+    }
+
+    public static Tile getTile(int idx, int idy) {
+        return tileset[idx + (idy * World.width)];
+    }
+
     public void render(Graphics g) {
-        for (Tile t : tileset) {
-            t.render(g);
+        // the first tiles to be rendered, starting from 0
+        int xstart = Math.max(Camera.getX() >> 4, 0),
+                ystart = Math.max(Camera.getY() >> 4, 0);
+        // the last tiles to be rendered, limited to the last tile of the world
+        int xend = Math.min(xstart + (Game.WIDTH >> 4) + 1, width),
+                yend = Math.min(ystart + (Game.HEIGHT >> 4) + 1, height);
+
+        for (int x = xstart; x < xend; x++) {
+            for (int y = ystart; y < yend; y++) {
+                Tile t = tileset[x + (y * width)];
+                t.render(g);
+            }
         }
     }
 
