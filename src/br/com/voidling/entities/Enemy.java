@@ -33,18 +33,18 @@ public class Enemy extends Entity {
 
     public void tick() {
         moving = false;
-        Point player = World.player.pos;
-        if (pos.x < player.x) {
+        Point target = World.player.pos;
+        if (pos.x < target.x) {
             moveTo((pos.x+speed), pos.y);
             inverted = false;
-        } else if (pos.x > player.x) {
+        } else if (pos.x > target.x) {
             moveTo(pos.x-speed, pos.y);
             inverted = true;
         }
 
-        if (pos.y < player.y) {
+        if (pos.y < target.y) {
             moveTo(pos.x, pos.y+speed);
-        } else if (pos.y > player.y) {
+        } else if (pos.y > target.y) {
             moveTo(pos.x, pos.y-speed);
         }
 
