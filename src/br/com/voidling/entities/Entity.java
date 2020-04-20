@@ -2,20 +2,13 @@ package br.com.voidling.entities;
 
 import br.com.voidling.main.Game;
 import br.com.voidling.world.Camera;
+import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 
 public class Entity {
-    public enum TYPE {
-        WEAPON,
-        AMMO,
-        LIFE,
-        COIN,
-        ENEMY,
-        PLAYER
-    }
     public static BufferedImage LIFEPACK_SPRITE = Game.spritesheet.getSpriteByIndex(5,0);
     public static BufferedImage WEAPON_SPRITE = Game.spritesheet.getSpriteByIndex(5,1);
     public static BufferedImage AMMO_SPRITE = Game.spritesheet.getSpriteByIndex(6,0);
@@ -23,48 +16,43 @@ public class Entity {
     public static BufferedImage ENEMY_SPRITE = Game.spritesheet.getSpriteByIndex(1,1);
     public static BufferedImage PLAYER_SPRITE = Game.spritesheet.getSpriteByIndex(1,0);
 
-    protected double x;
-    protected double y;
+    protected Point pos;
     protected Dimension size;
     protected BufferedImage sprite;
+    protected Rectangle rect;
     public boolean inverted;
 
+    protected Entity(int x, int y) {
+        this(x, y, Game.spriteSize, Game.spriteSize, null);
+    }
+
     public Entity(int x, int y, int width, int height, BufferedImage sprite) {
-        this.setX(x);
-        this.setY(y);
+        this.pos = new Point(x, y);
         this.setSize(new Dimension(width, height));
+        this.rect = new Rectangle(this.pos, this.size);
         this.sprite = sprite;
     }
 
-    public int getX() {
-        if (inverted)
-            return (int)x + size.width; // to compensate the image being rendered the other way
-        return (int)(x);
+    public void moveTo(int x, int y) {
+        this.pos.setLocation(x, y);
+        this.rect.setLocation(x, y);
     }
 
-    public void setX(double x) {
-        this.x = x;
+    // if inverted, should return the position with the width
+    public int getX() {
+        return inverted ? pos.x + size.width : pos.x;
     }
 
     public int getY() {
-        return (int)(y);
-    }
-
-    public void setY(double y) {
-        this.y = y;
+        return pos.y;
     }
 
     public int getWidth() {
-        if (inverted)
-            return size.width * -1;
-        return size.width;
-    }
-    public int getHeight() {
-        return size.height;
+        return inverted ? size.width * -1 : size.width;
     }
 
-    public Dimension getSize() {
-        return size;
+    public int getHeight() {
+        return size.height;
     }
 
     public void setSize(Dimension size) {

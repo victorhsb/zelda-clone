@@ -1,5 +1,6 @@
 package br.com.voidling.main;
 
+import br.com.voidling.entities.Enemy;
 import br.com.voidling.entities.Entity;
 import br.com.voidling.entities.Player;
 import br.com.voidling.graphics.IndexedSpritesheet;
@@ -13,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
@@ -29,11 +31,12 @@ public class Game extends Canvas implements Runnable, KeyListener {
     public static JFrame frame;
     public static int WIDTH = 240, HEIGHT = 160, SCALE = 3;
 
-    public static ArrayList<Entity> entities;
     public static IndexedSpritesheet spritesheet;
     public static World world;
 
-    public static Player player;
+    public static Random rand;
+
+
 
     public Game() {
         addKeyListener(this);
@@ -41,10 +44,8 @@ public class Game extends Canvas implements Runnable, KeyListener {
         spritesheet = new IndexedSpritesheet("/spritesheet.png");
         this.setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
         this.initFrame();
-        entities = new ArrayList<>();
+        rand = new Random();
 
-        player = new Player(0,0,16,16, spritesheet.getSprite(32,0,16,16));
-        entities.add(player);
         world = new World("/map.png");
     }
 
@@ -81,7 +82,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
     }
 
     public void tick() {
-        for (Entity e : entities) {
+        for (Entity e : World.entities) {
             e.tick();
         }
     }
@@ -100,7 +101,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
         g.fillRect(0, 0, WIDTH, HEIGHT);
         world.render(g);
 
-        for (Entity e : entities) {
+        for (Entity e : World.entities) {
             e.render(g);
         }
 
@@ -149,28 +150,24 @@ public class Game extends Canvas implements Runnable, KeyListener {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_RIGHT:
             case KeyEvent.VK_D: {
-                player.right = true;
-                player.inverted = false;
+                World.player.right = true;
+                World.player.inverted = false;
                 break;
             }
             case KeyEvent.VK_LEFT:
             case KeyEvent.VK_A: {
-                player.left = true;
-                player.inverted = true;
+                World.player.left = true;
+                World.player.inverted = true;
                 break;
             }
             case KeyEvent.VK_DOWN:
             case KeyEvent.VK_S: {
-                player.down = true;
+                World.player.down = true;
                 break;
             }
             case KeyEvent.VK_UP:
             case KeyEvent.VK_W: {
-                player.up = true;
-                break;
-            }
-            case KeyEvent.VK_SHIFT: {
-                player.running = true;
+                World.player.up = true;
                 break;
             }
             default:
@@ -188,26 +185,22 @@ public class Game extends Canvas implements Runnable, KeyListener {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_RIGHT:
             case KeyEvent.VK_D: {
-                player.right = false;
+                World.player.right = false;
                 break;
             }
             case KeyEvent.VK_LEFT:
             case KeyEvent.VK_A: {
-                player.left = false;
+                World.player.left = false;
                 break;
             }
             case KeyEvent.VK_DOWN:
             case KeyEvent.VK_S: {
-                player.down = false;
+                World.player.down = false;
                 break;
             }
             case KeyEvent.VK_UP:
             case KeyEvent.VK_W: {
-                player.up = false;
-                break;
-            }
-            case KeyEvent.VK_SHIFT: {
-                player.running = false;
+                World.player.up = false;
                 break;
             }
             default:

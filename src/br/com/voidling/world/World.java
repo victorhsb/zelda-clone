@@ -7,12 +7,19 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class World {
     public static Tile[] tileset;
     public static int width, height, size;
 
+    public static Player player;
+    public static ArrayList<Enemy> enemies;
+    public static ArrayList<Entity> entities;
+
     public World(String path) {
+        entities = new ArrayList<>();
+        enemies = new ArrayList<>();
         try {
             BufferedImage map = ImageIO.read(getClass().getResource(path));
             width = map.getWidth();
@@ -37,33 +44,35 @@ public class World {
                         }
                         case BLUE: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.player.setX(xpos);
-                            Game.player.setY(ypos);
+                            player = new Player(xpos, ypos);
+                            entities.add(player);
                             break;
                         }
                         case CYAN: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Ammo(xpos, ypos));
+                            entities.add(new Ammo(xpos, ypos));
                             break;
                         }
                         case RED: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Enemy(xpos, ypos));
+                            Enemy e = new Enemy(xpos, ypos);
+//                            entities.add(e);
+                            enemies.add(e);
                             break;
                         }
                         case GREEN: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Weapon(xpos, ypos));
+                            entities.add(new Weapon(xpos, ypos));
                             break;
                         }
                         case PINK: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Lifepack(xpos, ypos));
+                            entities.add(new Lifepack(xpos, ypos));
                             break;
                         }
                         case YELLOW: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Game.entities.add(new Coin(xpos, ypos));
+                            entities.add(new Coin(xpos, ypos));
                             break;
                         }
                         default: {
@@ -72,6 +81,7 @@ public class World {
                     }
                 }
             }
+            entities.addAll(enemies);
         } catch (IOException e) {
             e.printStackTrace();
         }
