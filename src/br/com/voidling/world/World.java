@@ -90,14 +90,26 @@ public class World {
         }
     }
 
-    public static boolean isFree(int xnext, int ynext) {
-        int left = xnext / Game.spriteSize;
-        int up = ynext / Game.spriteSize;
-        int right = (xnext + Game.spriteSize - 1) / Game.spriteSize;
-        int down = (ynext + Game.spriteSize - 1) / Game.spriteSize;
+    public static boolean isFree(int x, int y) {
+        /* dividing the raw position by the sprite size will give us at what tile
+         * index we will be looking at at that point.
+         * so we get the horizontal positions by dividing both the x and the x +
+         * sprite size minus 1 (to get the horizontal from the left and the right side
+         * of the sprite as well) and the vertical by doing the same with the given y */
+        int left = x / Game.spriteSize,
+                up = y / Game.spriteSize,
+                right = (x + Game.spriteSize - 1) / Game.spriteSize,
+                down = (y + Game.spriteSize - 1) / Game.spriteSize;
 
-        // check if position is inside a wall from the four different perspectives
-        // from (0,0), from (0, 1), from (1, 0) and from (1, 1)
+        /* check if position is inside a wall from the four different perspectives
+         * from (0,0), from (0, 1), from (1, 0) and from (1, 1)
+         * just like: 0,0  *   *  1,0
+         *             *   *   *   *
+         *             *   *   *   *
+         *            0,1  *   *  1,1
+         * working with static walls don't have any need of complex and complete collision
+         * validation as no walls have more than the sprite size of size and can never penetrate
+         * the user. */
         return !(getTile(left ,up) instanceof WallTile ||
                     getTile(left, down) instanceof WallTile ||
                     getTile(right, up) instanceof WallTile ||
@@ -111,11 +123,15 @@ public class World {
     public void tick() throws Exception {
         boolean refreshArray = false;
         for (Entity e : World.entities) {
-            if (!e.isActive()) refreshArray = true;
             e.tick();
+            if (!e.isActive()) refreshArray = true;
         }
 
-        // avoiding concurrent modifications of the array.
+        // TODO: any way to optimize this?
+        /* this is done here to avoid concurrent modifications of the array.
+        * its done when some inactive object is found on the entities array.
+        * we remove it and let it for the garbage collector to handle as we won't need
+        * this object anymore being rendered and ticked */
         if (refreshArray) {
             ArrayList<Entity> newEntities = new ArrayList<>();
             for (Entity e : World.entities) {
@@ -126,6 +142,7 @@ public class World {
             World.entities = newEntities;
         }
 
+        /* ultra basic endgame check */
         if (player.health <= 0) {
             // TODO: this is temporary, must implement some proper ending
             throw new Exception("quit");
@@ -133,16 +150,21 @@ public class World {
     }
 
     public void render(Graphics g) {
-        // the first tiles to be rendered, starting from 0
+        /* the first tiles comprehended by the camera's position, starting from 0 */
         int xstart = Math.max(Camera.getX() >> 4, 0),
                 ystart = Math.max(Camera.getY() >> 4, 0);
-        // the last tiles to be rendered, limited to the last tile of the world
+        /* the last tiles comprehended by the camera's position,
+         * limited to the last tile of the world.
+         * this is the xstart/ystart values plus the game view size divided by 16
+         * which is the amount of tiles that actually appear on screen (plus 1, used as buffer)
+         * (shifting 4 binary slots divides by 2^4 which is 16) */
         int xend = Math.min(xstart + (Game.WIDTH >> 4) + 1, width),
                 yend = Math.min(ystart + (Game.HEIGHT >> 4) + 1, height);
 
+        /* properly render the tiles */
         for (int x = xstart; x < xend; x++) {
             for (int y = ystart; y < yend; y++) {
-                Tile t = tileset[x + (y * width)];
+                Tile t = getTile(x, y);
                 t.render(g);
             }
         }
