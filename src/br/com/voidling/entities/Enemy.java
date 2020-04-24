@@ -4,23 +4,32 @@ import br.com.voidling.graphics.Sprite;
 import br.com.voidling.main.Game;
 import br.com.voidling.world.Camera;
 import br.com.voidling.world.World;
+import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Enemy extends Entity {
     public int animationSize = 4, animationState = 0;
+    public int damage;
     public BufferedImage[] animation;
 
-    private int speed = 1;
+    private final int speed = 1;
     // the execution count and at what execution it will shift sprites.
-    private int frames=0, maxFrames = 10;
+    private int frames=0;
+    private final int maxFrames = 10;
+    private final int collisionMaskOffset = 1;
     private boolean moving = false;
 
     public Enemy(int x, int y) {
         super(x, y, Game.spriteSize, Game.spriteSize, Entity.ENEMY_SPRITE);
-        animation = Sprite.ENEMY_SPRITE.getSpriteArray(animationSize);
-        rect = new Rectangle(x, y, size.width, size.height);
+        this.animation = Sprite.ENEMY_SPRITE.getSpriteArray(animationSize);
+        this.rect = new Rectangle(x, y, size.width, size.height);
+    }
+
+    public Enemy(int x, int y, int damage) {
+        this(x, y);
+        this.damage = damage;
     }
 
     public void moveTo(int x, int y) {
@@ -68,11 +77,19 @@ public class Enemy extends Entity {
     // check if the position will be colliding to any other enemy
     // used to block its movement
     public boolean willCollide(double xN, double yN) {
-        for (Enemy e : World.enemies) {
+        Rectangle nr = new Rectangle(
+                (int)xN + collisionMaskOffset,
+                (int)yN + collisionMaskOffset,
+                size.width - (2 * collisionMaskOffset),
+                size.height - (2 * collisionMaskOffset));
+        for (Entity e : World.entities) {
             if (e == this)
                 continue;
-            if (e.rect.intersects(xN, yN, size.width, size.height)) {
-                return true;
+
+            if (e instanceof Enemy || e instanceof Player) {
+                if (e.rect.intersects(nr)) {
+                    return true;
+                }
             }
         }
         return false;

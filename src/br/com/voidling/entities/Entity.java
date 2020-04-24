@@ -2,28 +2,26 @@ package br.com.voidling.entities;
 
 import br.com.voidling.main.Game;
 import br.com.voidling.world.Camera;
-import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 
 public class Entity {
-    public static BufferedImage LIFEPACK_SPRITE = Game.spritesheet.getSpriteByIndex(5,0);
-    public static BufferedImage WEAPON_SPRITE = Game.spritesheet.getSpriteByIndex(5,1);
-    public static BufferedImage AMMO_SPRITE = Game.spritesheet.getSpriteByIndex(6,0);
-    public static BufferedImage COIN_SPRITE = Game.spritesheet.getSpriteByIndex(6,1);
     public static BufferedImage ENEMY_SPRITE = Game.spritesheet.getSpriteByIndex(1,1);
-    public static BufferedImage PLAYER_SPRITE = Game.spritesheet.getSpriteByIndex(1,0);
 
     protected Point pos;
     protected Dimension size;
     protected BufferedImage sprite;
     protected Rectangle rect;
     public boolean inverted;
+    protected boolean active = true;
 
     protected Entity(int x, int y) {
         this(x, y, Game.spriteSize, Game.spriteSize, null);
+    }
+    protected Entity(int x, int y, int width, int height) {
+        this(x, y, width, height, null);
     }
 
     public Entity(int x, int y, int width, int height, BufferedImage sprite) {
@@ -36,6 +34,15 @@ public class Entity {
     public void moveTo(int x, int y) {
         this.pos.setLocation(x, y);
         this.rect.setLocation(x, y);
+    }
+
+    public void setActive(boolean state) { this.active = state; }
+    public boolean isActive() { return this.active; }
+
+    public int collect() { return 0; }
+
+    public void slideTo(int x, int y) {
+        moveTo(pos.x + x, pos.y + y);
     }
 
     // if inverted, should return the position with the width
@@ -60,7 +67,7 @@ public class Entity {
     }
 
     public void render(Graphics g) {
-        g.drawImage(sprite, getX() - Camera.getX(), getY() - Camera.getY(), null);
+        if (active) g.drawImage(sprite, getX() - Camera.getX(), getY() - Camera.getY(), null);
     }
 
     // tick to be implemented

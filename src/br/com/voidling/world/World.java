@@ -5,9 +5,13 @@ import br.com.voidling.main.Game;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.desktop.QuitEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class World {
     public static Tile[] tileset;
@@ -55,16 +59,15 @@ public class World {
                         }
                         case RED: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            Enemy e = new Enemy(xpos, ypos);
-//                            entities.add(e);
-                            enemies.add(e);
+                            enemies.add(new Enemy(xpos, ypos, 1));
                             break;
                         }
                         case GREEN: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            entities.add(new Weapon(xpos, ypos));
+                            // TODO: randomize what gun is deployed or differ it by distance of the player
+                            entities.add(new Weapon(xpos, ypos, Weapon.Gun.REVOLVER));
                             break;
-                        }
+                }
                         case PINK: {
                             tileset[idx] = new FloorTile(xpos, ypos);
                             entities.add(new Lifepack(xpos, ypos));
@@ -72,7 +75,7 @@ public class World {
                         }
                         case YELLOW: {
                             tileset[idx] = new FloorTile(xpos, ypos);
-                            entities.add(new Coin(xpos, ypos));
+                            entities.add(new Coin(xpos, ypos, 150));
                             break;
                         }
                         default: {
@@ -105,6 +108,30 @@ public class World {
         return tileset[idx + (idy * World.width)];
     }
 
+    public void tick() throws Exception {
+        boolean refreshArray = false;
+        for (Entity e : World.entities) {
+            if (!e.isActive()) refreshArray = true;
+            e.tick();
+        }
+
+        // avoiding concurrent modifications of the array.
+        if (refreshArray) {
+            ArrayList<Entity> newEntities = new ArrayList<>();
+            for (Entity e : World.entities) {
+                if (e.isActive()) {
+                    newEntities.add(e);
+                }
+            }
+            World.entities = newEntities;
+        }
+
+        if (player.health <= 0) {
+            // TODO: this is temporary, must implement some proper ending
+            throw new Exception("quit");
+        }
+    }
+
     public void render(Graphics g) {
         // the first tiles to be rendered, starting from 0
         int xstart = Math.max(Camera.getX() >> 4, 0),
@@ -118,6 +145,10 @@ public class World {
                 Tile t = tileset[x + (y * width)];
                 t.render(g);
             }
+        }
+
+        for (Entity e : World.entities) {
+            e.render(g);
         }
     }
 

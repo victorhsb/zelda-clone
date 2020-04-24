@@ -3,6 +3,7 @@ package br.com.voidling.main;
 import br.com.voidling.entities.Enemy;
 import br.com.voidling.entities.Entity;
 import br.com.voidling.entities.Player;
+import br.com.voidling.graphics.HUD;
 import br.com.voidling.graphics.IndexedSpritesheet;
 import br.com.voidling.graphics.Spritesheet;
 import br.com.voidling.world.Camera;
@@ -33,9 +34,10 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
     public static IndexedSpritesheet spritesheet;
     public static World world;
+    public static HUD hud;
 
     public static Random rand;
-
+    public static int score;
 
 
     public Game() {
@@ -47,6 +49,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
         rand = new Random();
 
         world = new World("/map.png");
+        hud = new HUD();
     }
 
     // basic setup of the window to be used on the game;
@@ -78,12 +81,18 @@ public class Game extends Canvas implements Runnable, KeyListener {
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 
     public void tick() {
-        for (Entity e : World.entities) {
-            e.tick();
+        try {
+            world.tick();
+        } catch (Exception e) {
+            e.printStackTrace();
+            stop();
         }
     }
 
@@ -100,10 +109,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
         g.setColor(new Color(0,0,0));
         g.fillRect(0, 0, WIDTH, HEIGHT);
         world.render(g);
-
-        for (Entity e : World.entities) {
-            e.render(g);
-        }
+        hud.render(g);
 
         g.dispose();
         g = bs.getDrawGraphics();
